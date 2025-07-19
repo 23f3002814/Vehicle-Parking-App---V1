@@ -1,0 +1,58 @@
+<h2>Welcome, {{ username}}!</h2>
+
+<!-- Available Parking Lots -->
+<h4>Available Parking Lots</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Lot Name</th>
+            <th>Location</th>
+            <th>Price</th>
+            <th>Available Spots</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for lot in available_lots %}
+        <tr>
+            <td>{{ lot.name }}</td>
+            <td>{{ lot.location }}</td>
+            <td>₹{{ lot.price }}</td>
+            <td>{{ lot.available_spots }}</td>
+            <td>
+                <form method="POST" action="/book_spot">
+                    <input type="hidden" name="lot_id" value="{{ lot.id }}">
+                    <button type="submit" class="btn btn-primary">Book</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Parking History -->
+<h4 class="mt-4">Your Parking History</h4>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Lot</th>
+            <th>Spot</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Cost</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in parking_history %}
+        <tr>
+            <td>{{ record.lot_name }}</td>
+            <td>{{ record.spot_id }}</td>
+            <td>{{ record.start_time }}</td>
+            <td>{{ record.end_time }}</td>
+            <td>₹{{ record.cost }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
