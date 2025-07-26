@@ -1,58 +1,107 @@
-<h2>Welcome, {{ username}}!</h2>
+{% extends "base.html" %}
 
-<!-- Available Parking Lots -->
-<h4>Available Parking Lots</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Lot Name</th>
-            <th>Location</th>
-            <th>Price</th>
-            <th>Available Spots</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for lot in available_lots %}
-        <tr>
-            <td>{{ lot.name }}</td>
-            <td>{{ lot.location }}</td>
-            <td>₹{{ lot.price }}</td>
-            <td>{{ lot.available_spots }}</td>
-            <td>
-                <form method="POST" action="/book_spot">
-                    <input type="hidden" name="lot_id" value="{{ lot.id }}">
-                    <button type="submit" class="btn btn-primary">Book</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+{% block title %}User Dashboard{% endblock %}
+
+
+{% block navbar_links %}
+
+
+  <li>
+  <a class="nav-link" href="{{ url_for('summary', username=username) }}">Summary</a>
+
+</li>
+ <li class="nav-item">
+    <a class="nav-link" href="/logout">Logout</a>
+  </li>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h2 style="text-align: center;">Welcome, {{ username }}!</h2>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-success">
+          {% for message in messages %}
+            <div>{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+<h3>Available Parking Lots:</h3>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Lot id</th>
+      <th>Lot Name</th>
+      <th>Price</th>
+      <th>Location</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for lot in parking_lots %}
+    <tr>
+      <td>{{lot.id}}</td>
+      <td>{{ lot.name }}</td>
+      <td>₹{{ lot.price }}/hr</td>
+      <td>{{ lot.location }}</td>
+
+      <td>
+        <form action="{{ url_for('show_reserve_form', lot_id=lot.id, username=username) }}" method="get" class="d-inline">
+  <button type="submit" class="btn btn-primary btn-sm">Reserve Spot</button>
+</form>
+
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
 </table>
 
-<!-- Parking History -->
-<h4 class="mt-4">Your Parking History</h4>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Lot</th>
-            <th>Spot</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Cost</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for record in parking_history %}
-        <tr>
-            <td>{{ record.lot_name }}</td>
-            <td>{{ record.spot_id }}</td>
-            <td>{{ record.start_time }}</td>
-            <td>{{ record.end_time }}</td>
-            <td>₹{{ record.cost }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+
+
+
+
+
+
+
+
+<h3>Booking history:</h3>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Lot</th>
+      <th>Spot</th>
+      <th>Vehicle number</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Cost / Action</th>
+     
+
+    </tr>
+  </thead>
+  <tbody>
+  {% for booking in bookings %}
+  <tr>
+    <td>{{ booking.lot.name }}</td>
+    <td>{{ booking.spot_id }}</td>
+    <td>{{ booking.vehicle_number }}</td>
+    <td>{{ booking.start_time.strftime('%d %b %Y %H:%M:%S') }}</td>
+<td>{{ booking.end_time.strftime('%d %b %Y %H:%M:%S') if booking.end_time else 'Active' }}</td>
+<td>
+  
+      {% if not booking.end_time %}
+        <form action="/release/{{ booking.id }}/{{ username }}" method="post" class="d-inline">
+          <button type="submit" class="btn btn-danger btn-sm">Release</button>
+        </form>
+      {% else %}
+        ₹{{ booking.cost }}
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+</tbody>
+
 </table>
-
-
+{%endblock%}
