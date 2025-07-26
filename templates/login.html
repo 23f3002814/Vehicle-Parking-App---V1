@@ -10,12 +10,23 @@
 </head>
 
 <body>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+        {% for message in messages %}
+        <li style="color: green;">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {%endwith%}
+
+
     <div id="main">
         <div id="canvas">
             <div id="form-body">
                 <h1 style="text-align: center;">Login</h1>
                 <br>
-                <!-- Form starts here -->
                 <form method="POST" action="/login">
                     <div class="mb-3">
                         <label for="usernameInput" class="form-label">Username</label>
