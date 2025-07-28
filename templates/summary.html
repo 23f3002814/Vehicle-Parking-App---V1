@@ -50,7 +50,8 @@
         {% for booking in bookings %}
         <tr>
           <td>{{ booking.lot.name }}</td>
-          <td>{{ booking.spot_id }}</td>
+          <td>{{ booking.spot.spot_number }}</td>
+
           <td>{{ booking.start_time.strftime('%d %b %Y %H:%M') }}</td>
           <td>{{ booking.end_time.strftime('%d %b %Y %H:%M') if booking.end_time else 'Active' }}</td>
           <td>

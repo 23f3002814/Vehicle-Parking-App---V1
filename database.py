@@ -22,7 +22,7 @@ class ParkingLot(db.Model):
     name = db.Column(db.String(100), nullable=False)
     location = db.Column(db.String(100), nullable=False)
     price = db.Column(db.Float, nullable=False)
-    total_spots=db.Column(db.Integer,nullable=False)
+    total_spots=db.Column(db.Integer)
     
     available_spots = db.Column(db.Integer, default=0)
 
@@ -30,10 +30,15 @@ class ParkingSpot(db.Model):
     __tablename__ = 'parking_spots'
     id = db.Column(db.Integer, primary_key=True)
     lot_id = db.Column(db.Integer, db.ForeignKey('parking_lots.id'), nullable=False)
-    status = db.Column(db.String(1), default='A')  # A = Available, O = Occupied
-    
+    spot_number = db.Column(db.Integer, nullable=False)  # lot-wise number
+    status = db.Column(db.String(1), default='A')  # 'A' = Available, 'O' = Occupied
 
     lot = db.relationship('ParkingLot', backref='spots')
+
+    __table_args__ = (
+        db.UniqueConstraint('lot_id', 'spot_number', name='uq_lot_spot_number'),
+    )
+
     
 class BookingHistory(db.Model):
     __tablename__ = 'booking_history'
